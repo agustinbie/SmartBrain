@@ -122,20 +122,22 @@ onRouteChange = (ruta) => {
 
 
 render() {
+  const {imageUrl, route, box} = this.state;
+  const {onRouteChange, onInputChange, onButtonSubmit} = this; 
   return (
     <div className="App">
       <ParticlesBg type="cobweb" bg={true}  />
-      <Navigation route={this.state.route} onRouteChange={this.onRouteChange}/>
-       {   this.state.route === "signin" ? <SignIn onRouteChange={this.onRouteChange}/> : 
-          (this.state.route === "home" ? 
+      <Navigation route={route} onRouteChange={onRouteChange}/>
+       {  route === "signin" ? <SignIn onRouteChange={onRouteChange}/> : 
+          (route === "home" ? 
            <div>
             <Logo />
             <Rank />
-            <ImageLinkForm  onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-             <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
+            <ImageLinkForm  onInputChange={onInputChange} onButtonSubmit={onButtonSubmit}/>
+             <FaceRecognition box={box} imageUrl={imageUrl}/>
              </div>  : 
 
-             <Register onRouteChange={this.onRouteChange}/>)  
+             <Register onRouteChange={onRouteChange}/>)  
 
         
         }
@@ -145,3 +147,8 @@ render() {
 }
 
 export default App;
+
+
+//para ver el history en github entrar a la carpeta smartbrain-app en el repositorio. El boton esta justo abajo de Add file
+
+//project files en el video nro 286
