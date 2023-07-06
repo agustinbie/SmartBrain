@@ -67,10 +67,21 @@ class App extends Component {
       imageUrl:"",
       box: {},
       route: "signin",
+      user: {
+                id:"",
+                name: "",
+                email: "",
+                password: "",
+                entries: 0, 
+                joined: ""
+            }
       
     }
   }
 
+  // componentDidMount() {
+  //   fetch("http://localhost:3001/").then(response => response.json()).then(console.log);   //se necesita instalar npm cors para que chrome te deje contectar 
+  // };
 
 
 
@@ -110,7 +121,20 @@ class App extends Component {
 // iria como parametro de returnClarifaiRequestOptions una url de una imagen para que el fetch post no de error, el this.state.input está vacio 
     fetch("https://api.clarifai.com/v2/models/" + "face-detection" + "/outputs", returnClarifaiRequestOptions(this.state.input))
         .then(response => response.json())
-        .then(result => this.displayFaceBox(this.calculateFaceLocation(result)))
+        .then(result => {
+            if (result) {
+                      fetch("http://localhost:3001/image",
+                                {
+                                    method: "put",
+                                    headers: {"Content-Type": "application/json"},
+                                    body: JSON.stringify({
+                                        id: this.state.user.id
+                                    })}
+                              ).then(response => response.json()).then(count => {
+                                this.setState(Object.assign(this.state.user, {entries: count}))  //object.assign() actualiza el objeto target (primer parametro) solo con el valor de la propiedad que le des en el segundo parametro
+                            }).then(console.log)
+                        }
+            this.displayFaceBox(this.calculateFaceLocation(result))})
         .catch(error => console.log('error', error));
   }
 
@@ -119,25 +143,37 @@ onRouteChange = (ruta) => {
   this.setState({route: ruta});
 }
 
+loadUser = (data) => {
+    this.setState({user: {
+             id:data.id,
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            entries: data.entries, 
+            joined: data.joined
+    }})
+
+}
+
 
 
 render() {
   const {imageUrl, route, box} = this.state;
-  const {onRouteChange, onInputChange, onButtonSubmit} = this; 
+  const {onRouteChange, onInputChange, onButtonSubmit, loadUser} = this; 
   return (
     <div className="App">
       <ParticlesBg type="cobweb" bg={true}  />
       <Navigation route={route} onRouteChange={onRouteChange}/>
-       {  route === "signin" ? <SignIn onRouteChange={onRouteChange}/> : 
+       {  route === "signin" ? <SignIn loadUser={loadUser} onRouteChange={onRouteChange}/> : 
           (route === "home" ? 
            <div>
             <Logo />
-            <Rank />
+            <Rank name={this.state.user.name} entries={this.state.user.entries}/>
             <ImageLinkForm  onInputChange={onInputChange} onButtonSubmit={onButtonSubmit}/>
              <FaceRecognition box={box} imageUrl={imageUrl}/>
              </div>  : 
 
-             <Register onRouteChange={onRouteChange}/>)  
+             <Register loadUser={loadUser} onRouteChange={onRouteChange}/>)  
 
         
         }
