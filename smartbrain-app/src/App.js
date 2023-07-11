@@ -144,6 +144,7 @@ onRouteChange = (ruta) => {
 }
 
 loadUser = (data) => {
+    console.log(data.id);
     this.setState({user: {
              id:data.id,
             name: data.name,
@@ -151,7 +152,8 @@ loadUser = (data) => {
             password: data.password,
             entries: data.entries, 
             joined: data.joined
-    }})
+    }});
+    console.log(this.state)
 
 }
 
