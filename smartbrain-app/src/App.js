@@ -55,14 +55,7 @@ const returnClarifaiRequestOptions = (imageUrl) => {
 }
     
 
-  
-
-    
-
-class App extends Component {
-  constructor (){
-    super();
-    this.state = {
+  const initialState = {
       input: "",
       imageUrl:"",
       box: {},
@@ -75,8 +68,15 @@ class App extends Component {
                 entries: 0, 
                 joined: ""
             }
-      
-    }
+
+  }
+
+    
+
+class App extends Component {
+  constructor (){
+    super();
+    this.state = initialState
   }
 
   // componentDidMount() {
@@ -114,8 +114,9 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
-    console.log("click");
-    this.setState({imageUrl: this.state.input})
+    // console.log("click");
+    this.setState({imageUrl: this.state.input});
+    console.log(this.state.input);
 
 //https://dynaimage.cdn.cnn.com/cnn/c_fill,g_auto,w_1200,h_675,ar_16:9/https%3A%2F%2Fcdn.cnn.com%2Fcnnnext%2Fdam%2Fassets%2F220616144714-tom-hanks-file-053122.jpg
 // iria como parametro de returnClarifaiRequestOptions una url de una imagen para que el fetch post no de error, el this.state.input está vacio 
@@ -132,15 +133,20 @@ class App extends Component {
                                     })}
                               ).then(response => response.json()).then(count => {
                                 this.setState(Object.assign(this.state.user, {entries: count}))  //object.assign() actualiza el objeto target (primer parametro) solo con el valor de la propiedad que le des en el segundo parametro
-                            }).then(console.log)
+                            }).catch(console.log)
                         }
+                        
             this.displayFaceBox(this.calculateFaceLocation(result))})
         .catch(error => console.log('error', error));
   }
 
 onRouteChange = (ruta) => {
+  if (ruta === "signin") {
+    this.setState(initialState);  //borra la informacion que esté cargada en el state mientras vas cargando imagenes, para que otro usuario no quede con el state del usuario anterior al loguearse
+  }else {
+    this.setState({route: ruta});
+  }
   
-  this.setState({route: ruta});
 }
 
 loadUser = (data) => {

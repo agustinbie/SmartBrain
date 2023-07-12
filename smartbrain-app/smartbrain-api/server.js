@@ -6,6 +6,8 @@ import bcrypt from "bcrypt-nodejs"
 import cors from "cors";
 import knex from "knex";  //knex para conectar el server con el database
 
+
+
  const db = knex({
   client: 'pg',  //seleccionar pg o mysql
   connection: {
@@ -102,7 +104,7 @@ app.post("/signin", (req, res) => {
 // });
 
 
-app.post("/register", (req, res) => {
+app.post("/register",  (req, res) => {
 	const {email,name,password} = req.body;
 	const hash = bcrypt.hashSync(password);  //agrega bcrypt y el metodo .transaction() de knex para agregar password y registrar en ambas tablas, login y users
 	db.transaction(trx => {  //trx transaction object
